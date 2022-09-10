@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authentication,authorization } = require("../middleware/auth");
 const { userLogin, followUser, unfollowUser, getUser } = require('../controllers/userController');
-const { userPost, deletePost, likePost, unlikePost, addComment } = require("../controllers/postController")
+const { userPost, deletePost, likePost, unlikePost, addComment, getPost } = require("../controllers/postController")
 
 
 //============ USER API's =============//
@@ -37,8 +37,8 @@ router.post('/api/unlike', authentication, unlikePost);
 //==Add Comment
 router.post('/api/comment', authentication, addComment);
 
-// //==Get Post
-// router.get('/api/posts', authentication, getPost);
+//==Get Post
+router.get('/api/posts/:postId', authentication, getPost);
 
 // //==Get All Post
 // router.get('/api/all_posts', authentication, getAllPost);

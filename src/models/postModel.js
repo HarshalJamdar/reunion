@@ -19,7 +19,10 @@ description: {
     trim:true,
 },
 
-comments : [ObjectId],
+comments :{
+    type : [ObjectId],
+    ref : "Comment"
+},
 
 like : [ObjectId],
 

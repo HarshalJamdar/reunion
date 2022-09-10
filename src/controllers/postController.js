@@ -205,4 +205,28 @@ const addComment = async function(req,res){
    }
 }
 
-module.exports = { userPost, deletePost, likePost, unlikePost, addComment };
+const getPost = async function(req,res){
+    try{
+        let postId = req.params.postId;
+        let userEmail = req.email;
+
+        if (!isValidObjectId(postId)) return res.status(400).send({ status: false, message: "Id is not a valid" });
+
+        let user = await userModel.findOne({ email : userEmail });
+        if(!user ) return res.status(404).send({ status : false, msg : "User not found" });
+        let userId = user._id;
+   
+        let post = await postModel.findOne({_id : postId,isDeleted : false}).populate("comments");
+       if(!post ) return res.status(404).send({ status : false, msg : "Post not found" });
+
+       if(post.userId.toString() !== userId.toString()) return res.status(403).send({ status: false, msg:"Not authorize"});
+
+       //==sending succesfull response==//
+       return res.status(200).send({ status: true, msg : "Successfull",data: post });
+
+    }catch(error) {
+       res.status(500).send({status:false, message:error.message});
+   }
+}
+
+module.exports = { userPost, deletePost, likePost, unlikePost, addComment , getPost };
