@@ -42,6 +42,9 @@ const userPost = async function(req,res){
    }
 }
 
+//========================================================================================================//
+
+//---DELETE POST
 const deletePost = async function(req,res){
     try{
         let requestBody = req.body
@@ -73,6 +76,10 @@ const deletePost = async function(req,res){
    }
 }
 
+
+//========================================================================================================//
+
+//---LIKE POST
 const likePost = async function(req,res){
     try{
         let requestBody = req.body
@@ -116,6 +123,9 @@ const likePost = async function(req,res){
    }
 }
 
+//========================================================================================================//
+
+//---UNLIKE POST
 const unlikePost = async function(req,res){
     try{
         let requestBody = req.body
@@ -160,7 +170,9 @@ const unlikePost = async function(req,res){
    }
 }
 
+//========================================================================================================//
 
+//---ADD COMMENT
 const addComment = async function(req,res){
     try{
         let requestBody = req.body
@@ -205,6 +217,9 @@ const addComment = async function(req,res){
    }
 }
 
+//========================================================================================================//
+
+//---GET POST BY ID
 const getPost = async function(req,res){
     try{
         let postId = req.params.postId;
@@ -218,15 +233,61 @@ const getPost = async function(req,res){
    
         let post = await postModel.findOne({_id : postId,isDeleted : false}).populate("comments");
        if(!post ) return res.status(404).send({ status : false, msg : "Post not found" });
-
        if(post.userId.toString() !== userId.toString()) return res.status(403).send({ status: false, msg:"Not authorize"});
 
+       let arr = [];
+       for(let i=0;i<post.comments.length;i++){
+          arr.push(post.comments[i].comment);
+       }
+        let sendData = {};
+        sendData.title = post.title;
+        sendData.description = post.description;
+        sendData.comments = arr;
+        sendData.likes = post.likes;
+
        //==sending succesfull response==//
-       return res.status(200).send({ status: true, msg : "Successfull",data: post });
+       return res.status(200).send({ status: true, msg : "Successfull",data: sendData });
 
     }catch(error) {
        res.status(500).send({status:false, message:error.message});
    }
 }
 
-module.exports = { userPost, deletePost, likePost, unlikePost, addComment , getPost };
+//========================================================================================================//
+
+//---GET ALL POST
+const getAllPost = async function(req,res){
+    try{
+        let userEmail = req.email;
+        let user = await userModel.findOne({ email : userEmail });
+        if(!user ) return res.status(404).send({ status : false, msg : "User not found" });
+        let userId = user._id;
+
+        let post = await postModel.find({userId : userId, isDeleted : false}).populate("comments").select( { _id : 0, title : 1, description : 1, comments : 1, likes : 1, createdAt : 1 } ).sort({ createdAt : 1});
+        if(!post ) return res.status(404).send({ status : false, msg : "Post not found" });
+        
+        
+        let sendData = [];
+        for(let i=0;i<post.length;i++){
+            let temp = {};
+            temp.title = post[i].title;
+            temp.description = post[i].description;
+            temp.likes = post[i].likes;
+            temp.createdAt = post[i].createdAt;
+            temp.comments = [];
+            for(let j=0;j<post[i].comments.length;j++){
+                temp.comments.push(post[i].comments[j].comment);
+            }
+            sendData.push(temp);
+        }
+       
+        //==sending succesfull response==//
+       return res.status(200).send({ status: true, msg : "Successfull",data: sendData });
+
+    }catch(error) {
+       res.status(500).send({status:false, message:error.message});
+   }
+}
+
+
+module.exports = { userPost, deletePost, likePost, unlikePost, addComment , getPost, getAllPost };
