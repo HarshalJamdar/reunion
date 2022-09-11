@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
-const { isValidObjectId } = require("mongoose")
-const userModel = require("../models/userModel")
+// const { isValidObjectId } = require("mongoose")
+// const userModel = require("../models/userModel")
 
 
 let authentication = function (req, res, next) {
@@ -24,4 +24,6 @@ let authentication = function (req, res, next) {
 
 //**********************************************************************//
 
-module.exports = {authentication}
+module.exports = { authentication }
+
+//**********************************************************************//

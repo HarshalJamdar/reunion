@@ -233,7 +233,7 @@ const getPost = async function(req,res){
    
         let post = await postModel.findOne({_id : postId,isDeleted : false}).populate("comments");
        if(!post ) return res.status(404).send({ status : false, msg : "Post not found" });
-       if(post.userId.toString() !== userId.toString()) return res.status(403).send({ status: false, msg:"Not authorize"});
+    //    if(post.userId.toString() !== userId.toString()) return res.status(403).send({ status: false, msg:"Not authorize"});
 
        let arr = [];
        for(let i=0;i<post.comments.length;i++){
@@ -281,7 +281,7 @@ const getAllPost = async function(req,res){
             sendData.push(temp);
         }
        
-        //==sending succesfull response==//
+    //==sending succesfull response==//
        return res.status(200).send({ status: true, msg : "Successfull",data: sendData });
 
     }catch(error) {
@@ -289,5 +289,8 @@ const getAllPost = async function(req,res){
    }
 }
 
+//========================================================================================================//
 
 module.exports = { userPost, deletePost, likePost, unlikePost, addComment , getPost, getAllPost };
+
+//========================================================================================================//

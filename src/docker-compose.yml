@@ -1,0 +1,16 @@
+version : '3'
+
+services: 
+    web:
+        image: mongo:latest
+        restart: always
+        volumes: 
+           - mongo_db:/data/db
+
+app: 
+  container_name: docker-mongo-demo1
+  restart: always
+  build: .
+  ports:
+    - 5000:5000
+
